@@ -25,14 +25,14 @@ group by rc_name;
 select nc_name as category_name, n.n_dt as last_date
 from news_categories as nc
 inner join news as n on n.n_category = nc.nc_id and n.n_dt = (select max(n2.n_dt) 
-															  from news as n2
+							      from news as n2
                                                               where n2.n_category = nc.nc_id)
 union
 select rc_name as category_name, r.r_dt as last_date
 from reviews_categories as rc
 inner join reviews as r on r.r_category = rc.rc_id and r.r_dt = (select max(r2.r_dt) 
-															  from reviews as r2
-                                                              where r2.r_category = rc.rc_id);                                                          
+								 from reviews as r2
+                                                      		 where r2.r_category = rc.rc_id);                                                          
 
 -- 5.Написать запрос, показывающий список страниц сайта верхнего уровня (у таких страниц нет родительской страницы)
 --   и список баннеров для каждой такой страницы.
@@ -115,8 +115,8 @@ left join reviews as r on r.r_category = rc.rc_id where r.r_category is null;
 select n_header, n_dt
 from news as n
 inner join news_categories as nc on nc.nc_id = n.n_category
-									and nc.nc_name = 'Логистика'
-									and extract(year from n.n_dt) = 2012;
+				and nc.nc_name = 'Логистика'
+				and extract(year from n.n_dt) = 2012;
 
 -- 16.Написать запрос, показывающий список годов, за которые есть новости, а также 
 --    количество новостей за каждый из годов.
@@ -211,7 +211,7 @@ select p.p_name
 from pages as p
 inner join m2m_banners_pages as m on m.p_id = p.p_id
 inner join banners as b on b.b_id = m.b_id 
-							and (b.b_click/b.b_show) = (select max(b2.b_click/b2.b_show) from banners as b2);
+			and (b.b_click/b.b_show) = (select max(b2.b_click/b2.b_show) from banners as b2);
 
 -- 26.Написать запрос, считающий среднее отношение кликов к показам по всем баннерам, 
 -- которые были показаны хотя бы один раз.
