@@ -236,7 +236,34 @@ inner join m2m_banners_pages as m on m.p_id = p.p_id and p.p_parent is null;
 
 -- 29.Написать запрос, показывающий баннер(ы), 
 -- который(ые) показаны на самом большом количестве страниц.
-            
+
+select banners.b_id, b_url, count(p_id) count
+from banners
+inner join m2m_banners_pages on banners.b_id = m2m_banners_pages.b_id
+group by b_id, b_url
+having count = (select max(count)
+    		from (select banners.b_id, b_url, count(p_id) count
+		      from banners
+        	      inner join m2m_banners_pages ON banners.b_id = m2m_banners_pages.b_id
+                      group by b_id, b_url
+        	      order by count desc) 
+        	t);
             
 -- 30.Написать запрос, показывающий страницу(ы), 
 -- на которой(ых) показано больше всего баннеров.
+
+select *
+from (select p.p_name, banners_count
+      from pages as p
+      inner join (select m2m_banners_pages.p_id, count(*) as banners_count
+    		  from m2m_banners_pages
+    		  group by m2m_banners_pages.p_id) as temp on temp.p_id = p.p_id
+      order by banners_count desc, p_name asc) t2
+having banners_count = (select max(banners_count)
+    			from (select p.p_name, banners_count
+			      from pages as p
+			      inner join (select m2m_banners_pages.p_id, count(*) as banners_count
+					  from m2m_banners_pages
+					  group by m2m_banners_pages.p_id) as temp on temp.p_id = p.p_id
+			      order by banners_count desc, p_name asc) 
+		        t3);
